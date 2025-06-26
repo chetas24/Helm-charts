@@ -1,17 +1,81 @@
 redis:
   name: redis
-  image: redis:7.2
-  port: 6379
   replicas: 1
 
-  config:
-    maxmemory: "256mb"
-    policy: "allkeys-lru"
+  image:
+    repository: redis
+    tag: "7.2.4"
+    pullPolicy: IfNotPresent
 
+  port: 6379
+
+  serviceName: redis-service
+  configMapName: redis-config
+  secretName: redis-secret
+  pvcName: redis-data-pvc
+
+  terminationGracePeriodSeconds: 10
+
+  updateStrategy: RollingUpdate
+
+  # Pod-level securityContext
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+  # Container-level securityContext
+  containerSecurityContext:
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  # Probes
+  livenessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+  # Auth configuration
   auth:
     enabled: true
-    password: "changeme123"
+    password: "supersecurepassword"
+    secretName: redis-secret
 
+  # Redis server config (used in redis.conf)
+  config:
+    bind: "0.0.0.0"
+    maxmemory: "256mb"
+    policy: "allkeys-lru"  # options: noeviction, allkeys-lru, allkeys-random, volatile-lru, volatile-random, volatile-ttl
+
+  # Service settings
+  service:
+    name: redis-service
+    type: ClusterIP   # or NodePort / LoadBalancer
+    headless: false
+    ports:
+      - name: redis
+        port: 6379
+        targetPort: 6379
+        # nodePort: 30079 # Optional if using NodePort
+
+  # Resources
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+
+  # Persistence
   persistence:
     enabled: true
     size: 1Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: "" # leave blank for default SC or specify like "fast", "gp2"

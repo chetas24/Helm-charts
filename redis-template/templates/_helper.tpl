@@ -1,11 +1,19 @@
 {{- define "redis-template.fullname" -}}
-{{ .Release.Name }}-{{ .Values.redis.name }}
+{{ printf "%s-%s" .Release.Name .Values.redis.name }}
 {{- end }}
 
 {{- define "redis-template.configmapName" -}}
-{{ .Release.Name }}-{{ .Values.redis.name }}-config
+{{ default (printf "%s-%s-config" .Release.Name .Values.redis.name) .Values.redis.configMapName }}
 {{- end }}
 
 {{- define "redis-template.secretName" -}}
-{{ .Release.Name }}-{{ .Values.redis.name }}-secret
+{{ default (printf "%s-%s-secret" .Release.Name .Values.redis.name) .Values.redis.auth.secretName }}
+{{- end }}
+
+{{- define "redis-template.serviceName" -}}
+{{ default (printf "%s-%s-service" .Release.Name .Values.redis.name) .Values.redis.serviceName }}
+{{- end }}
+
+{{- define "redis-template.pvcName" -}}
+{{ default (printf "%s-%s-pvc" .Release.Name .Values.redis.name) .Values.redis.pvcName }}
 {{- end }}
