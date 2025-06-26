@@ -1,0 +1,16 @@
+{{- define "redis-template.service" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "redis-template.fullname" . }}
+  labels:
+    app: {{ .Values.redis.name }}
+spec:
+  clusterIP: None
+  selector:
+    app: {{ .Values.redis.name }}
+  ports:
+    - name: redis
+      port: {{ .Values.redis.port }}
+      targetPort: {{ .Values.redis.port }}
+{{- end }}

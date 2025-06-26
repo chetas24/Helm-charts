@@ -1,0 +1,76 @@
+{{- define "redis-template.statefulset" }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "redis-template.fullname" . }}
+  labels:
+    app: {{ .Values.redis.name }}
+spec:
+  serviceName: {{ include "redis-template.fullname" . }}
+  replicas: {{ .Values.redis.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.redis.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.redis.name }}
+    spec:
+      containers:
+        - name: {{ .Values.redis.name }}
+          image: {{ .Values.redis.image }}
+          command: ["redis-server", "/etc/redis/redis.conf"]
+          ports:
+            - containerPort: {{ .Values.redis.port }}
+          env:
+            {{- if .Values.redis.auth.enabled }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "redis-template.secretName" . }}
+                  key: REDIS_PASSWORD
+            {{- end }}
+          volumeMounts:
+            - name: redis-config
+              mountPath: /etc/redis
+            {{- if .Values.redis.persistence.enabled }}
+            - name: data
+              mountPath: /data
+            {{- end }}
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                {{- if .Values.redis.auth.enabled }}
+                - "-a"
+                - "$(REDIS_PASSWORD)"
+                {{- end }}
+                - "ping"
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                {{- if .Values.redis.auth.enabled }}
+                - "-a"
+                - "$(REDIS_PASSWORD)"
+                {{- end }}
+                - "ping"
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+      volumes:
+        - name: redis-config
+          configMap:
+            name: {{ include "redis-template.configmapName" . }}
+  {{- if .Values.redis.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.redis.persistence.size }}
+  {{- end }}
+{{- end }}

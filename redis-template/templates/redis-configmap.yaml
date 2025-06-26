@@ -1,0 +1,15 @@
+{{- define "redis-template.configmap" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "redis-template.configmapName" . }}
+  labels:
+    app: {{ .Values.redis.name }}
+data:
+  redis.conf: |
+    maxmemory {{ .Values.redis.config.maxmemory }}
+    maxmemory-policy {{ .Values.redis.config.policy }}
+    {{- if .Values.redis.persistence.enabled }}
+    appendonly yes
+    {{- end }}
+{{- end }}
