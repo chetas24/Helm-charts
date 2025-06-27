@@ -35,7 +35,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.redis.auth.secretName }}
+                  name: {{ .Values.redis.auth.secret.name }}
                   key: REDIS_PASSWORD
           volumeMounts:
             - name: redis-config
@@ -72,7 +72,7 @@ spec:
       volumes:
         - name: redis-config
           configMap:
-            name: {{ .Values.redis.configMapName }}
+            name: {{ .Values.redis.configMap.name }}
         {{- if not .Values.redis.persistence.enabled }}
         - name: data
           emptyDir: {}
