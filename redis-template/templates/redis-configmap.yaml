@@ -12,7 +12,7 @@ data:
     maxmemory {{ .Values.redis.config.maxmemory }}
     maxmemory-policy {{ .Values.redis.config.policy }}
     {{- if .Values.redis.auth.enabled }}
-    requirepass {{ .Values.redis.auth.password }}
+    requirepass {{ .Values.redis.auth.secret.password }}
     {{- end }}
     {{- if .Values.redis.persistence.enabled }}
     appendonly yes

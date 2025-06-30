@@ -107,7 +107,7 @@ spring:
   redis:
     host: redis-backend            # Redis service name from your Helm chart
     port: 6379
-    password: supersecure          # Must match .Values.redis.auth.password
+    password: supersecure          # Must match .Values.redis.auth.secret.password
     timeout: 60000
     lettuce:
       pool:
