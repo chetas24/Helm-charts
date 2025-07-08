@@ -1,3 +1,4 @@
+# redis-template/templates/_helpers.tpl
 {{- define "redis-template.fullname" -}}
 {{ printf "%s-%s" .Release.Name .Values.redis.name }}
 {{- end }}

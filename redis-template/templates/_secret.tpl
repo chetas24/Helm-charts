@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Values.redis.auth.secret.name }}
+  name: {{ include "redis-template.secretName" . }}
   labels:
     app: {{ .Values.redis.name }}
 type: Opaque

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.redis.service.name }}
+  name: {{ include "redis-template.serviceName" . }}
   labels:
     app: {{ .Values.redis.name }}
 spec:

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.redis.configMap.name }}
+  name: {{ include "redis-template.configmapName" . }}
   labels:
     app: {{ .Values.redis.name }}
 data:

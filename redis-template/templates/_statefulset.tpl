@@ -2,11 +2,11 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Values.redis.name }}
+  name: {{ include "redis-template.fullname" . }}
   labels:
     app: {{ .Values.redis.name }}
 spec:
-  serviceName: {{ .Values.redis.service.name }}
+  serviceName: {{ include "redis-template.serviceName" . }}
   replicas: {{ .Values.redis.replicas | default 1 }}
   selector:
     matchLabels:
@@ -35,7 +35,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.redis.auth.secret.name }}
+                  name: {{ include "redis-template.secretName" . }}
                   key: REDIS_PASSWORD
           volumeMounts:
             - name: redis-config
@@ -72,12 +72,12 @@ spec:
       volumes:
         - name: redis-config
           configMap:
-            name: {{ .Values.redis.configMap.name }}
+            name: {{ include "redis-template.configmapName" . }}
         {{- if not .Values.redis.persistence.enabled }}
         - name: data
           emptyDir: {}
         {{- end }}
-{{- if .Values.redis.persistence.enabled }}
+  {{- if .Values.redis.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -89,5 +89,5 @@ spec:
         {{- if .Values.redis.persistence.storageClassName }}
         storageClassName: {{ .Values.redis.persistence.storageClassName }}
         {{- end }}
-{{- end }}
+  {{- end }}
 {{- end }}

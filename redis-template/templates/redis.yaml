@@ -1,0 +1,5 @@
+# redis-template/templates/redis.yaml
+{{- include "redis-template.secret" . }}
+{{- include "redis-template.configmap" . }}
+{{- include "redis-template.service" . }}
+{{- include "redis-template.statefulset" . }}
