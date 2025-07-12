@@ -80,7 +80,7 @@ for i in "${!key_files[@]}"; do
 done
 
 read -p "Select private key to use for decryption: " key_choice
-if ! [[ "$key_choice" =~ ^[0-9]+$ ]] || [ "$key_choice" -lt 1 ] || [ "$key_choice" -gt "${#key_files[@]}" ]]; then
+if ! [[ "$key_choice" =~ ^[0-9]+$ ]] || [[ "$key_choice" -lt 1 ]] || [[ "$key_choice" -gt "${#key_files[@]}" ]]; then
   echo -e "${RED}❌ Invalid key selection.${NC}"
   exit 1
 fi
