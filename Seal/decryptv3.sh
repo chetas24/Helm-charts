@@ -86,11 +86,11 @@ echo ""
 echo -e "${YELLOW}🔍 Decrypting sealed secret using '${key_name}'...${NC}"
 echo -e "${YELLOW}📄 Sealed file: ${sealed_file}${NC}"
 echo -e "${YELLOW}🔑 Key path: ${key_path}${NC}"
-echo -e "${YELLOW}💬 Running command: kubeseal --recovery-unseal --recovery-private-key \"$key_path\" --sealed-secret < \"$sealed_file\"${NC}"
+echo -e "${YELLOW}💬 Running command: kubeseal --recovery-unseal --recovery-private-key \"$key_path\" < \"$sealed_file\"${NC}"
 echo ""
 
 # Run decryption and capture output
-output=$(kubeseal --recovery-unseal --recovery-private-key "$key_path" --sealed-secret < "$sealed_file" 2>&1)
+output=$(kubeseal --recovery-unseal --recovery-private-key "$key_path" < "$sealed_file" 2>&1)
 status=$?
 
 # Handle failure
