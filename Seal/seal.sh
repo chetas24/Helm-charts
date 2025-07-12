@@ -8,6 +8,7 @@
 # I will try to create binary out of this using shc
 
 CERT_DIR="./seal"
+SEALED_DIR="./sealed"
 SECRET_NAME="dummy-secret"
 SECRET_NAMESPACE="dummy-namespace"
 KEY_NAME="secret"  # Static key name used in stringData
@@ -70,6 +71,16 @@ fi
 echo ""
 echo "🔒 Sealing using '$cert_name' with key '$KEY_NAME'..."
 
+# Check sealed directory exists
+if [[ ! -d "$SEALED_DIR" ]]; then
+  echo "❌ Directory '$SEALED_DIR' not found. Please create it first."
+  exit 1
+fi
+
+# Perform sealing
+echo ""
+echo "🔒 Sealing using '$cert_name' with key '$KEY_NAME'..."
+
 sealed_output=$(kubeseal --cert "$cert_path" --scope=cluster-wide --format=yaml <<EOF
 apiVersion: v1
 kind: Secret
@@ -82,13 +93,16 @@ stringData:
 EOF
 )
 
-# if [[ $? -ne 0 ]]; then
-#   echo "❌ Failed to seal secret. Make sure the certificate is valid."
-#   exit 1
-# fi
-
-# Outputs final SealedSecret
+# Output to console
 echo ""
 echo "✅ SealedSecret YAML:"
-echo ""
+echo "-------------------------------------------"
 echo "$sealed_output"
+echo "-------------------------------------------"
+
+# Save to file
+sealed_file="$SEALED_DIR/latest.yaml"
+echo "$sealed_output" > "$sealed_file"
+
+echo ""
+echo "💾 YAML saved to: $sealed_file"
