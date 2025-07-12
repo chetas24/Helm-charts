@@ -51,7 +51,7 @@ for i in "${!sealed_files[@]}"; do
 done
 
 read -p "Select sealed secret file to decrypt: " sealed_choice
-if ! [[ "$sealed_choice" =~ ^[0-9]+$ ]] || [ "$sealed_choice" -lt 1 ] || [ "$sealed_choice" -gt "${#sealed_files[@]}" ]; then
+if ! [[ "$sealed_choice" =~ ^[0-9]+$ ]] || [[ "$sealed_choice" -lt 1 ]] || [[ "$sealed_choice" -gt "${#sealed_files[@]}" ]]; then
   echo -e "${RED}❌ Invalid selection.${NC}"
   exit 1
 fi

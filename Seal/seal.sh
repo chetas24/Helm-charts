@@ -8,7 +8,7 @@
 # I will try to create binary out of this using shc
 # sealed, certs, keys folder should be already created
 
-CERT_DIR="./seal"
+CERT_DIR="./certs"
 SEALED_DIR="./sealed"
 SECRET_NAME="dummy-secret"
 SECRET_NAMESPACE="dummy-namespace"
