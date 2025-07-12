@@ -72,6 +72,8 @@ fi
 
 key_path="${key_files[$((key_choice - 1))]}"
 key_name=$(basename "$key_path")
+echo -e "${GREEN}🔑 Using private key: $key_path${NC}"
+
 
 # Ensure output dir
 # Check if decrypted output directory exists
