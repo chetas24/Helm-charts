@@ -6,6 +6,7 @@
 # It uses scope as cluster-wide
 # uses static name and namespace as we are using cluster-wide
 # I will try to create binary out of this using shc
+# sealed, certs, keys folder should be already created
 
 CERT_DIR="./seal"
 SEALED_DIR="./sealed"
