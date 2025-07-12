@@ -6,7 +6,7 @@
 # NOTE: Requires kubeseal v0.24.0+ for --recovery-unseal support, recovery can we done only inthis version or above
 
 SEALED_DIR="./sealed"
-KEY_DIR="./key"
+KEY_DIR="./keys"
 OUTPUT_DIR="./decrypted"
 
 YELLOW='\033[1;33m'
@@ -84,19 +84,35 @@ fi
 
 echo ""
 echo -e "${YELLOW}🔍 Decrypting sealed secret using '${key_name}'...${NC}"
+echo -e "${YELLOW}📄 Sealed file: ${sealed_file}${NC}"
+echo -e "${YELLOW}🔑 Key path: ${key_path}${NC}"
+echo -e "${YELLOW}💬 Running command: kubeseal --recovery-unseal --recovery-private-key \"$key_path\" --sealed-secret < \"$sealed_file\"${NC}"
+echo ""
 
-output=$(kubeseal --recovery-unseal --recovery-private-key "$key_path" --sealed-secret < "$sealed_file" 2>/dev/null)
+# Run decryption and capture output
+output=$(kubeseal --recovery-unseal --recovery-private-key "$key_path" --sealed-secret < "$sealed_file" 2>&1)
+status=$?
 
-if [[ $? -ne 0 ]]; then
-  echo -e "${RED}❌ Decryption failed. Make sure the private key matches the certificate used to seal.${NC}"
+# Handle failure
+if [[ $status -ne 0 ]]; then
+  echo -e "${RED}❌ Decryption failed.${NC}"
+  echo -e "${RED}🧾 kubeseal error output:${NC}"
+  echo "$output"
   exit 1
 fi
 
+# Success
 echo ""
 echo -e "${GREEN}✅ Decrypted Secret:${NC}"
 echo "-----------------------------------------"
 echo "$output"
 echo "-----------------------------------------"
+
+# Check if decrypted directory exists
+if [[ ! -d "$OUTPUT_DIR" ]]; then
+  echo -e "${RED}❌ Directory '$OUTPUT_DIR' not found. Cannot save decrypted secret.${NC}"
+  exit 1
+fi
 
 # Save decrypted output
 echo "$output" > "$OUTPUT_DIR/latest.yaml"
