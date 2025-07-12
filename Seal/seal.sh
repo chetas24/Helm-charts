@@ -82,10 +82,10 @@ stringData:
 EOF
 )
 
-if [[ $? -ne 0 ]]; then
-  echo "❌ Failed to seal secret. Make sure the certificate is valid."
-  exit 1
-fi
+# if [[ $? -ne 0 ]]; then
+#   echo "❌ Failed to seal secret. Make sure the certificate is valid."
+#   exit 1
+# fi
 
 # Outputs final SealedSecret
 echo ""
