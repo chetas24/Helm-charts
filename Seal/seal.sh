@@ -4,7 +4,8 @@
 # Author: cBarhate
 # Purpose: Seal a plaintext value into a full SealedSecret YAML (offline, no applyto cluster)
 # It uses scope as cluster-wide
-# default namespace as we are using cluster-wide
+# uses static name and namespace as we are using cluster-wide
+# I will try to create binary out of this using shc
 
 CERT_DIR="./seal"
 SECRET_NAME="dummy-secret"
