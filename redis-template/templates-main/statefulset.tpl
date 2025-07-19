@@ -32,6 +32,29 @@ spec:
             - name: redis-data
               mountPath: /data
               subPath: data
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: {{ .Values.redis.resources.requests.memory | quote }}
+              cpu: {{ .Values.redis.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.redis.resources.limits.memory | quote }}
+              cpu: {{ .Values.redis.resources.limits.cpu | quote }}
+      {{- if not .Values.redis.persistence.enabled }}
+      volumes:
+        - name: redis-data
+          emptyDir: {}
+      {{- end }}
+  {{- if .Values.redis.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:
         name: redis-data
@@ -41,4 +64,5 @@ spec:
           requests:
             storage: {{ .Values.redis.persistence.size }}
         storageClassName: {{ .Values.redis.persistence.storageClass | quote }}
+  {{- end }}
 {{- end }}

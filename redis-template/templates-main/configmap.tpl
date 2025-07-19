@@ -6,6 +6,5 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   redis.conf: |
-    maxmemory 2mb
-    maxmemory-policy allkeys-lru
+{{ .Values.redis.configInline | indent 4 }}
 {{- end }}
