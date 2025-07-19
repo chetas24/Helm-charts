@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: {{ .Release.Name }}-redis
   serviceName: {{ .Release.Name }}-redis
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
@@ -18,8 +18,9 @@ spec:
         - name: redis
           image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
+          command: ["redis-server", "/etc/redis/redis.conf"]
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ .Values.redis.service.port }}
               name: redis
           env:
             - name: REDIS_PASSWORD
@@ -31,16 +32,19 @@ spec:
             - name: redis-data
               mountPath: /data
               subPath: data
+            - name: redis-config
+              mountPath: /etc/redis/redis.conf
+              subPath: redis.conf
           livenessProbe:
             exec:
-              command: ["sh", "-c", "redis-cli -a $REDIS_PASSWORD ping"]
+              command: ["sh", "-c", "redis-cli -a $REDIS_PASSWORD ping || exit 1"]
             initialDelaySeconds: 15
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
             exec:
-              command: ["sh", "-c", "redis-cli -a $REDIS_PASSWORD ping"]
+              command: ["sh", "-c", "redis-cli -a $REDIS_PASSWORD ping || exit 1"]
             initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 5
@@ -52,12 +56,15 @@ spec:
             limits:
               memory: {{ .Values.redis.resources.limits.memory | quote }}
               cpu: {{ .Values.redis.resources.limits.cpu | quote }}
-      {{- if not .Values.redis.persistence.enabled }}
       volumes:
+        - name: redis-config
+          configMap:
+            name: {{ .Release.Name }}-redis-config
+        {{- if not .Values.redis.persistence.enabled }}
         - name: redis-data
           emptyDir: {}
-      {{- end }}
-  {{- if .Values.redis.persistence.enabled }}
+        {{- end }}
+{{- if .Values.redis.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:
         name: redis-data
@@ -67,4 +74,4 @@ spec:
           requests:
             storage: {{ .Values.redis.persistence.size }}
         storageClassName: {{ .Values.redis.persistence.storageClass | quote }}
-  {{- end }}
+{{- end }}
