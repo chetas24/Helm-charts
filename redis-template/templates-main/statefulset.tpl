@@ -1,19 +1,19 @@
-{{- define "redis.statefulset" -}}
+{{- define "redis-template.statefulset" -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "redis.fullname" . }}
+  name: {{ include "redis-template.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: {{ include "redis.fullname" . }}
-  serviceName: {{ include "redis.fullname" . }}
+      app: {{ include "redis-template.fullname" . }}
+  serviceName: {{ include "redis-template.fullname" . }}
   replicas: 1
   template:
     metadata:
       labels:
-        app: {{ include "redis.fullname" . }}
+        app: {{ include "redis-template.fullname" . }}
     spec:
       containers:
         - name: redis
@@ -26,7 +26,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "redis.fullname" . }}-secret
+                  name: {{ include "redis-template.fullname" . }}-secret
                   key: redis-password
           volumeMounts:
             - name: redis-data

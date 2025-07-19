@@ -1,8 +1,8 @@
-{{- define "redis.service" -}}
+{{- define "redis-template.service" -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "redis.fullname" . }}
+  name: {{ include "redis-template.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   type: {{ .Values.redis.service.type }}
@@ -11,5 +11,5 @@ spec:
       targetPort: 6379
       name: redis
   selector:
-    app: {{ include "redis.fullname" . }}
+    app: {{ include "redis-template.fullname" . }}
 {{- end }}

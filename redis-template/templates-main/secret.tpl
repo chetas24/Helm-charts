@@ -1,8 +1,8 @@
-{{- define "redis.secret" -}}
+{{- define "redis-template.secret" -}}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ include "redis.fullname" . }}-secret
+  name: {{ include "redis-template.fullname" . }}-secret
   namespace: {{ .Release.Namespace }}
 type: Opaque
 data:

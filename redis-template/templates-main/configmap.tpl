@@ -1,8 +1,8 @@
-{{- define "redis.configmap" -}}
+{{- define "redis-template.configmap" -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "redis.fullname" . }}-config
+  name: {{ include "redis-template.fullname" . }}-config
   namespace: {{ .Release.Namespace }}
 data:
   redis.conf: |
