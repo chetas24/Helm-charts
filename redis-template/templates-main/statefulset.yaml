@@ -19,7 +19,7 @@ spec:
           image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
           ports:
-            - containerPort: 6379
+            - containerPort: {{ .Values.service.port }}
               name: redis
           env:
             - name: REDIS_PASSWORD
@@ -32,15 +32,19 @@ spec:
               mountPath: /data
               subPath: data
           livenessProbe:
-            tcpSocket:
-              port: 6379
+            exec:
+              command: ["sh", "-c", "redis-cli -a $REDIS_PASSWORD ping"]
             initialDelaySeconds: 15
             periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
-            tcpSocket:
-              port: 6379
+            exec:
+              command: ["sh", "-c", "redis-cli -a $REDIS_PASSWORD ping"]
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           resources:
             requests:
               memory: {{ .Values.redis.resources.requests.memory | quote }}
