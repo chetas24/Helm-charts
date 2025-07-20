@@ -1,13 +1,15 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-redis-config
-  namespace: {{ .Release.Namespace }}
-data:
-  redis.conf: |
-    {{- define "redis-template.redisConf" }}
-    maxmemory 2mb
-    maxmemory-policy allkeys-lru
-    appendonly yes
-    save 60 1000
-    {{- end }}
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: {{ .Release.Name }}-redis-config
+#   namespace: {{ .Release.Namespace }}
+# data:
+#   redis.conf: |
+#     {{- define "redis-template.redisConf" }}
+#     maxmemory 2mb
+#     maxmemory-policy allkeys-lru
+#     appendonly yes
+#     save 60 1000
+#     {{- end }}
+
+# we will seal redis.conf locally
